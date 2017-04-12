@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using NatiTools.xGraphics;
 using NatiTools.xIO;
 
@@ -23,6 +16,8 @@ namespace PaladinsAutoLock
 
         private Brush TARGER_BRUSH = new SolidBrush(Color.Blue);
         private Pen TARGER_PEN = new Pen(Color.Red, TARGET_THICKNESS);
+
+        private const int COLOR_TOLERANCE = 10;
 
         private int ClickX = 0;
         private int ClickY = 0;
@@ -57,7 +52,9 @@ namespace PaladinsAutoLock
             {
                 // Check if we're on the champion select screen
                 if (checkPixel(bmpScreen, 1733, 205, 249, 222, 221) &&
-                    checkPixel(bmpScreen, 1860, 220, 3, 221, 237))
+                    checkPixel(bmpScreen, 1860, 220, 3, 221, 237) &&
+                    checkPixel(bmpScreen, 20, 20, 17, 58, 169) &&
+                    checkPixel(bmpScreen, 1900, 900, 125, 27, 43))
                 {
                     // Select the champion
                     Mouse.LeftClick(ClickX, ClickY);
@@ -68,10 +65,13 @@ namespace PaladinsAutoLock
             }
         }
 
-        private bool checkPixel(Bitmap bmp, int x, int y, byte r, byte g, byte b)
+        private bool checkPixel(Bitmap bmp, int x, int y, int r, int g, int b)
         {
             Color c = bmp.GetPixel(x, y);
-            return (c.R == r && c.G == g && c.B == b);
+            return (
+                c.R >= r - COLOR_TOLERANCE && c.R <= r + COLOR_TOLERANCE &&
+                c.G >= g - COLOR_TOLERANCE && c.G <= g + COLOR_TOLERANCE &&
+                c.B >= b - COLOR_TOLERANCE && c.B <= b + COLOR_TOLERANCE);
         }
 
         private void selectChampion(int x, int y)
